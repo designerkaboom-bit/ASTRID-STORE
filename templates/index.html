@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASTRID Store</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="promo-bar">
+        FREE SHIPPING OVER ₱995 | 30 DAYS FREE RETURN | CASH ON DELIVERY
+    </div>
+
+    <header class="navbar">
+        <div class="logo"><a href="{{ url_for('home') }}" style="text-decoration:none; color:inherit;">ASTRID</a></div>
+        <nav class="nav-links">
+            <a href="{{ url_for('home') }}">ALL</a>
+            <a href="{{ url_for('home', category='WOMEN') }}">WOMEN</a>
+            <a href="{{ url_for('home', category='MEN') }}">MEN</a>
+            <a href="{{ url_for('home', category='KIDS') }}">KIDS</a>
+            <a href="{{ url_for('home', category='BEAUTY') }}">BEAUTY</a>
+            <a href="{{ url_for('home', category='LUXURY') }}">LUXURY</a>
+        </nav>
+        <div class="search-container">
+            <form action="{{ url_for('home') }}" method="GET">
+                <input type="text" name="search" placeholder="Search products..." value="{{ search_query if search_query else '' }}">
+            </form>
+        </div>
+        <div class="user-actions">
+            <a href="#">Account</a>
+            <a href="{{ url_for('view_cart') }}" class="cart-btn">Cart ({{ cart_count }})</a>
+        </div>
+    </header>
+
+    <section class="hero-banner">
+        <div class="banner-text">
+            <h2>NEW SEASON ARRIVALS</h2>
+            <p>Up to 50% OFF on Top Fashion Brands</p>
+            <a href="{{ url_for('home') }}" class="shop-btn">SHOP NOW</a>
+        </div>
+    </section>
+
+    <main class="container">
+        <h3>
+            {% if selected_category %}
+                CATEGORY: {{ selected_category }}
+            {% elif search_query %}
+                SEARCH RESULTS FOR: "{{ search_query }}"
+            {% else %}
+                RECOMMENDED FOR YOU
+            {% endif %}
+        </h3>
+        
+        {% if products %}
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="img-wrapper">
+                    <img src="{{ product.image }}" alt="{{ product.name }}">
+                </div>
+                <div class="product-info">
+                    <span class="brand">{{ product.brand }}</span>
+                    <h4 class="name">{{ product.name }}</h4>
+                    <span class="price">₱{{ "{:,}".format(product.price) }}</span>
+                    
+                    <!-- PINALITAN: Form na ang ginamit kapalit ng <a> link -->
+                    <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+                        <button type="submit" class="add-cart-btn">ADD TO CART</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>No products found.</p>
+        {% endif %}
+    </main>
+
+</body>
+</html>
